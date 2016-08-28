@@ -22,5 +22,7 @@ namespace AspNetCore.Identity.Marten
 
         public string PhoneNumber { get; set; }
         public DateTimeOffset? PhoneNumberConfirmedAt { get; set; }
+
+        public DateTimeOffset? TwoFactorEnabledAt { get; set; }
     }
 }

@@ -16,6 +16,7 @@ namespace AspNetCore.Identity.Marten
         , IUserSecurityStampStore<TUser>
         , IUserEmailStore<TUser>
         , IUserPhoneNumberStore<TUser>
+        , IUserTwoFactorStore<TUser>
         where TUser : IdentityUser<TKey>
     {
         public UserStore(IDocumentSession session, ISystemClock clock)
@@ -253,6 +254,25 @@ namespace AspNetCore.Identity.Marten
             Guard(user, cancellationToken);
 
             user.PhoneNumberConfirmedAt = confirmed ? Clock.UtcNow : (DateTimeOffset?)null;
+            return Task.FromResult(0);
+        }
+
+        #endregion
+
+        #region IUserTwoFactorStore<TUser> Support
+
+        public Task<bool> GetTwoFactorEnabledAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(user.TwoFactorEnabledAt.HasValue);
+        }
+
+        public Task SetTwoFactorEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.TwoFactorEnabledAt = enabled ? Clock.UtcNow : (DateTimeOffset?)null;
             return Task.FromResult(0);
         }
 
