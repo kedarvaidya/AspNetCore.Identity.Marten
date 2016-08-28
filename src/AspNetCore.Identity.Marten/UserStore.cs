@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AspNetCore.Identity.Marten.Internal;
 using Marten;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCore.Identity.Marten
@@ -13,14 +14,19 @@ namespace AspNetCore.Identity.Marten
         : IUserStore<TUser>
         , IUserPasswordStore<TUser>
         , IUserSecurityStampStore<TUser>
+        , IUserEmailStore<TUser>
         where TUser : IdentityUser<TKey>
     {
-        public UserStore(IDocumentSession session)
+        public UserStore(IDocumentSession session, ISystemClock clock)
         {
             if (session == null)
                 throw new ArgumentNullException(nameof(session));
 
+            if (clock == null)
+                throw new ArgumentNullException(nameof(clock));
+
             Session = session;
+            Clock = clock;
         }
 
         /// <summary>
@@ -35,6 +41,8 @@ namespace AspNetCore.Identity.Marten
         /// True if changes should be automatically persisted, otherwise false.
         /// </value>
         public bool AutoSaveChanges { get; set; } = true;
+
+        public ISystemClock Clock { get; private set; }
 
         #region IUserStore<TUser> Support
         public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
@@ -154,6 +162,62 @@ namespace AspNetCore.Identity.Marten
             Guard(user, cancellationToken);
 
             user.SecurityStamp = stamp;
+            return Task.FromResult(0);
+        }
+
+        #endregion
+
+        #region IUserEmailStore<TUser> Support
+
+        public Task<string> GetEmailAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(user.Email);
+        }
+
+        public Task SetEmailAsync(TUser user, string email, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.Email = email;
+            return Task.FromResult(0);
+        }
+
+        public Task<string> GetNormalizedEmailAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(user.NormalizedEmail);
+        }
+
+        public Task SetNormalizedEmailAsync(TUser user, string normalizedEmail, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.NormalizedEmail = normalizedEmail;
+            return Task.FromResult(0);
+        }
+
+        public Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+        {
+            Guard(cancellationToken);
+
+            return Session.QueryAsync(new FindUserByNormalizedEmail<TUser, TKey>(normalizedEmail));
+        }
+
+        public Task<bool> GetEmailConfirmedAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(user.EmailConfirmedAt.HasValue);
+        }
+
+        public Task SetEmailConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.EmailConfirmedAt = confirmed ? Clock.UtcNow : (DateTimeOffset?)null;
             return Task.FromResult(0);
         }
 

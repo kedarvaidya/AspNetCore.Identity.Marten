@@ -15,5 +15,9 @@ namespace AspNetCore.Identity.Marten
         public string PasswordHash { get; set; }
 
         public string SecurityStamp { get; set; }
+
+        public string Email { get; set; }
+        public string NormalizedEmail { get; set; }
+        public DateTimeOffset? EmailConfirmedAt { get; set; }
     }
 }
