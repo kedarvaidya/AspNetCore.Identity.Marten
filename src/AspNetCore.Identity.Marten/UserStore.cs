@@ -22,6 +22,7 @@ namespace AspNetCore.Identity.Marten
         , IQueryableUserStore<TUser>
         , IUserLoginStore<TUser>
         , IUserClaimStore<TUser>
+        , IUserAuthenticationTokenStore<TUser>
         where TUser : IdentityUser<TKey>
     {
         public UserStore(IDocumentSession session, ISystemClock clock)
@@ -448,6 +449,44 @@ namespace AspNetCore.Identity.Marten
 
             var users = await Session.QueryAsync(new FindUsersByClaim<TUser, TKey>(claim));
             return users.ToList();
+        }
+
+        #endregion
+
+        #region IUserAuthenticationTokenStore<TUser> Support
+
+        public Task<string> GetTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            var token = FindToken(user, loginProvider, name);
+            return Task.FromResult(token?.Value);
+        }
+
+        public Task SetTokenAsync(TUser user, string loginProvider, string name, string value, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            var token = new IdentityUserAuthenticationToken(loginProvider, name, value);
+            user.AuthenticationTokens.Add(token);
+
+            return Task.FromResult(0);
+        }
+
+        public Task RemoveTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            var token = FindToken(user, loginProvider, name);
+            if (token != null)
+                user.AuthenticationTokens.Remove(token);
+
+            return Task.FromResult(0);
+        }
+
+        protected IdentityUserAuthenticationToken FindToken(TUser user, string loginProvider, string name)
+        {
+            return user.AuthenticationTokens.SingleOrDefault(t => t.LoginProvider == loginProvider && t.Name == name);
         }
 
         #endregion

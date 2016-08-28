@@ -32,5 +32,7 @@ namespace AspNetCore.Identity.Marten
         public IList<IdentityUserLogin> Logins { get; } = new List<IdentityUserLogin>();
 
         public IList<IdentityUserClaim> Claims { get; } = new List<IdentityUserClaim>();
+
+        public IList<IdentityUserAuthenticationToken> AuthenticationTokens { get; } = new List<IdentityUserAuthenticationToken>();
     }
 }
