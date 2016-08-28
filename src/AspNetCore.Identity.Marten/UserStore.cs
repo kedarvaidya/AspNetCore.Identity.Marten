@@ -12,6 +12,7 @@ namespace AspNetCore.Identity.Marten
     public class UserStore<TUser, TKey>
         : IUserStore<TUser>
         , IUserPasswordStore<TUser>
+        , IUserSecurityStampStore<TUser>
         where TUser : IdentityUser<TKey>
     {
         public UserStore(IDocumentSession session)
@@ -135,6 +136,25 @@ namespace AspNetCore.Identity.Marten
             Guard(user, cancellationToken);
 
             return Task.FromResult(!String.IsNullOrWhiteSpace(user.PasswordHash));
+        }
+
+        #endregion
+
+        #region ISecurityStampStore<TUser> Support
+
+        public Task<string> GetSecurityStampAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(user.SecurityStamp);
+        }
+
+        public Task SetSecurityStampAsync(TUser user, string stamp, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.SecurityStamp = stamp;
+            return Task.FromResult(0);
         }
 
         #endregion

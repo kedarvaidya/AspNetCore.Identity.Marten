@@ -13,5 +13,7 @@ namespace AspNetCore.Identity.Marten
         public string NormalizedUserName { get; set; }
 
         public string PasswordHash { get; set; }
+
+        public string SecurityStamp { get; set; }
     }
 }
