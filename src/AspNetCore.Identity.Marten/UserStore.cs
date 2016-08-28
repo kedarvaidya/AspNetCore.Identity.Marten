@@ -15,6 +15,7 @@ namespace AspNetCore.Identity.Marten
         , IUserPasswordStore<TUser>
         , IUserSecurityStampStore<TUser>
         , IUserEmailStore<TUser>
+        , IUserPhoneNumberStore<TUser>
         where TUser : IdentityUser<TKey>
     {
         public UserStore(IDocumentSession session, ISystemClock clock)
@@ -218,6 +219,40 @@ namespace AspNetCore.Identity.Marten
             Guard(user, cancellationToken);
 
             user.EmailConfirmedAt = confirmed ? Clock.UtcNow : (DateTimeOffset?)null;
+            return Task.FromResult(0);
+        }
+
+        #endregion
+
+        #region IUserPhoneNumberStore<TUser> Support
+
+        public Task<string> GetPhoneNumberAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(user.PhoneNumber);
+        }
+
+        public Task SetPhoneNumberAsync(TUser user, string phoneNumber, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.PhoneNumber = phoneNumber;
+            return Task.FromResult(0);
+        }
+
+        public Task<bool> GetPhoneNumberConfirmedAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(user.PhoneNumberConfirmedAt.HasValue);
+        }
+
+        public Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.PhoneNumberConfirmedAt = confirmed ? Clock.UtcNow : (DateTimeOffset?)null;
             return Task.FromResult(0);
         }
 

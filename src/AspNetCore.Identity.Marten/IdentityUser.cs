@@ -19,5 +19,8 @@ namespace AspNetCore.Identity.Marten
         public string Email { get; set; }
         public string NormalizedEmail { get; set; }
         public DateTimeOffset? EmailConfirmedAt { get; set; }
+
+        public string PhoneNumber { get; set; }
+        public DateTimeOffset? PhoneNumberConfirmedAt { get; set; }
     }
 }
