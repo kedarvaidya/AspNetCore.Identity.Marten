@@ -11,6 +11,7 @@ namespace AspNetCore.Identity.Marten
 {
     public class UserStore<TUser, TKey>
         : IUserStore<TUser>
+        , IUserPasswordStore<TUser>
         where TUser : IdentityUser<TKey>
     {
         public UserStore(IDocumentSession session)
@@ -110,6 +111,32 @@ namespace AspNetCore.Identity.Marten
 
             return Session.QueryAsync(new FindUserByNormalizedUserName<TUser, TKey>(normalizedUserName), cancellationToken);
         }
+        #endregion
+
+        #region IUserPasswordStore<TUser> Support
+
+        public Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(user.PasswordHash);
+        }
+
+        public Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.PasswordHash = passwordHash;
+            return Task.FromResult(0);
+        }
+
+        public Task<bool> HasPasswordAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(!String.IsNullOrWhiteSpace(user.PasswordHash));
+        }
+
         #endregion
 
         #region IDisposable Support
