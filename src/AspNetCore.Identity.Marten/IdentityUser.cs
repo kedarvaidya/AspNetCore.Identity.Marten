@@ -28,5 +28,7 @@ namespace AspNetCore.Identity.Marten
         public DateTimeOffset? LockoutEnabledAt { get; set; }
         public DateTimeOffset? LockoutEndsAt { get; set; }
         public IList<DateTimeOffset> AccessFailedAt { get; set; } = new List<DateTimeOffset>();
+
+        public IList<IdentityUserLogin> Logins { get; } = new List<IdentityUserLogin>();
     }
 }

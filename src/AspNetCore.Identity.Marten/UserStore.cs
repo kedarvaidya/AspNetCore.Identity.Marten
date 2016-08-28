@@ -19,6 +19,7 @@ namespace AspNetCore.Identity.Marten
         , IUserTwoFactorStore<TUser>
         , IUserLockoutStore<TUser>
         , IQueryableUserStore<TUser>
+        , IUserLoginStore<TUser>
         where TUser : IdentityUser<TKey>
     {
         public UserStore(IDocumentSession session, ISystemClock clock)
@@ -343,6 +344,44 @@ namespace AspNetCore.Identity.Marten
             return Task.FromResult(0);
         }
 
+        #endregion
+
+        #region IUserLoginStore<TUser> Support
+        public Task<IList<UserLoginInfo>> GetLoginsAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            IList<UserLoginInfo> logins = user.Logins.Select(login => (UserLoginInfo)login).ToList();
+            return Task.FromResult(logins);
+        }
+
+        public Task AddLoginAsync(TUser user, UserLoginInfo login, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.Logins.Add(login);
+            return Task.FromResult(0);
+        }
+
+        public Task RemoveLoginAsync(TUser user, string loginProvider, string providerKey, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            var login = user.Logins.AsQueryable().SingleOrDefault(l => l.LoginProvider == loginProvider && l.ProviderKey == providerKey);
+            if (login != null)
+            {
+                user.Logins.Remove(login);
+            }
+
+            return Task.FromResult(login);
+        }
+
+        public Task<TUser> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
+        {
+            Guard(cancellationToken);
+
+            return Session.QueryAsync(new FindByLogin<TUser, TKey>(loginProvider, providerKey), cancellationToken);
+        }
         #endregion
 
         #region IDisposable Support
