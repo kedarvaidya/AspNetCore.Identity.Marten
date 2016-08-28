@@ -24,5 +24,9 @@ namespace AspNetCore.Identity.Marten
         public DateTimeOffset? PhoneNumberConfirmedAt { get; set; }
 
         public DateTimeOffset? TwoFactorEnabledAt { get; set; }
+
+        public DateTimeOffset? LockoutEnabledAt { get; set; }
+        public DateTimeOffset? LockoutEndsAt { get; set; }
+        public IList<DateTimeOffset> AccessFailedAt { get; set; } = new List<DateTimeOffset>();
     }
 }

@@ -17,6 +17,7 @@ namespace AspNetCore.Identity.Marten
         , IUserEmailStore<TUser>
         , IUserPhoneNumberStore<TUser>
         , IUserTwoFactorStore<TUser>
+        , IUserLockoutStore<TUser>
         where TUser : IdentityUser<TKey>
     {
         public UserStore(IDocumentSession session, ISystemClock clock)
@@ -273,6 +274,63 @@ namespace AspNetCore.Identity.Marten
             Guard(user, cancellationToken);
 
             user.TwoFactorEnabledAt = enabled ? Clock.UtcNow : (DateTimeOffset?)null;
+            return Task.FromResult(0);
+        }
+
+        #endregion
+
+        #region IUserLockoutStore<TUser> Support
+
+        public Task<bool> GetLockoutEnabledAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(user.LockoutEnabledAt.HasValue);
+        }
+
+        public Task SetLockoutEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.LockoutEnabledAt = enabled ? Clock.UtcNow : (DateTimeOffset?)null;
+            return Task.FromResult(0);
+        }
+
+        public Task<DateTimeOffset?> GetLockoutEndDateAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(user.LockoutEndsAt);
+        }
+
+        public Task SetLockoutEndDateAsync(TUser user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.LockoutEndsAt = lockoutEnd;
+            return Task.FromResult(0);
+        }
+
+        public Task<int> GetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            return Task.FromResult(user.AccessFailedAt.Count);
+        }
+
+        public Task<int> IncrementAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.AccessFailedAt.Add(Clock.UtcNow);
+            return Task.FromResult(user.AccessFailedAt.Count);
+        }
+
+        public Task ResetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            user.AccessFailedAt.Clear();
             return Task.FromResult(0);
         }
 
