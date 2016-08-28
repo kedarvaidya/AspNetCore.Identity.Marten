@@ -18,6 +18,7 @@ namespace AspNetCore.Identity.Marten
         , IUserPhoneNumberStore<TUser>
         , IUserTwoFactorStore<TUser>
         , IUserLockoutStore<TUser>
+        , IQueryableUserStore<TUser>
         where TUser : IdentityUser<TKey>
     {
         public UserStore(IDocumentSession session, ISystemClock clock)
@@ -46,6 +47,14 @@ namespace AspNetCore.Identity.Marten
         public bool AutoSaveChanges { get; set; } = true;
 
         public ISystemClock Clock { get; private set; }
+
+        public IQueryable<TUser> Users
+        {
+            get
+            {
+                return Session.Query<TUser>();
+            }
+        }
 
         #region IUserStore<TUser> Support
         public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
