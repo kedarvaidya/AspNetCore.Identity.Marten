@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using AspNetCore.Identity.Marten.Internal;
@@ -20,6 +21,7 @@ namespace AspNetCore.Identity.Marten
         , IUserLockoutStore<TUser>
         , IQueryableUserStore<TUser>
         , IUserLoginStore<TUser>
+        , IUserClaimStore<TUser>
         where TUser : IdentityUser<TKey>
     {
         public UserStore(IDocumentSession session, ISystemClock clock)
@@ -382,6 +384,72 @@ namespace AspNetCore.Identity.Marten
 
             return Session.QueryAsync(new FindByLogin<TUser, TKey>(loginProvider, providerKey), cancellationToken);
         }
+        #endregion
+
+        #region IUserClaimStore<TUser> Support
+
+        public Task<IList<Claim>> GetClaimsAsync(TUser user, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            IList<Claim> claims = user.Claims.Select(c => (Claim)c).ToList();
+            return Task.FromResult(claims);
+        }
+
+        public Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            if (claims == null) throw new ArgumentNullException(nameof(claims));
+
+            foreach (var claim in claims)
+                user.Claims.Add(claim);
+
+            return Task.FromResult(0);
+        }
+
+        public Task ReplaceClaimAsync(TUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            if (claim == null) throw new ArgumentNullException(nameof(claim));
+            if (newClaim == null) throw new ArgumentNullException(nameof(newClaim));
+
+            var matchingClaims = user.Claims.Where(c => c.Type == claim.Type && c.Value == claim.Value).ToArray();
+            foreach (var matchingClaim in matchingClaims)
+            {
+                matchingClaim.RebuildFrom(newClaim);
+            }
+
+            return Task.FromResult(0);
+        }
+
+        public Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            Guard(user, cancellationToken);
+
+            if (claims == null) throw new ArgumentNullException(nameof(claims));
+
+            foreach (var claim in claims)
+            {
+                var matchingClaims = user.Claims.Where(c => c.Type == claim.Type && c.Value == claim.Value).ToArray();
+                foreach (var matchingClaim in matchingClaims)
+                {
+                    user.Claims.Remove(claim);
+                }
+            }
+
+            return Task.FromResult(0);
+        }
+
+        public async Task<IList<TUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+        {
+            Guard(cancellationToken);
+
+            var users = await Session.QueryAsync(new FindUsersByClaim<TUser, TKey>(claim));
+            return users.ToList();
+        }
+
         #endregion
 
         #region IDisposable Support

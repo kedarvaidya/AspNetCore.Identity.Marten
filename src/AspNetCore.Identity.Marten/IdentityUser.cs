@@ -30,5 +30,7 @@ namespace AspNetCore.Identity.Marten
         public IList<DateTimeOffset> AccessFailedAt { get; set; } = new List<DateTimeOffset>();
 
         public IList<IdentityUserLogin> Logins { get; } = new List<IdentityUserLogin>();
+
+        public IList<IdentityUserClaim> Claims { get; } = new List<IdentityUserClaim>();
     }
 }
