@@ -42,7 +42,6 @@ dlldata.c
 
 # DNX
 project.lock.json
-artifacts/
 
 *_i.c
 *_p.c
@@ -243,3 +242,9 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+# Cake Build Artifacts and Tools
+artifacts/
+tools/Cake/
+tools/nuget.exe
+tools/packages.config.md5sum
