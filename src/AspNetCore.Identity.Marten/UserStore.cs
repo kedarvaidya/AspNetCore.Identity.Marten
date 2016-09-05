@@ -383,7 +383,11 @@ namespace AspNetCore.Identity.Marten
         {
             Guard(cancellationToken);
 
-            return Session.QueryAsync(new FindByLogin<TUser, TKey>(loginProvider, providerKey), cancellationToken);
+            // Temporarily do not use compiled queries for searching within child collections
+            // SEE https://github.com/JasperFx/marten/issues/503
+            // return Session.QueryAsync(new FindUserByLogin<TUser, TKey>(loginProvider, providerKey), cancellationToken);
+
+            return Session.Query<TUser>().SingleOrDefaultAsync(u => u.Logins.Any(l => l.LoginProvider == loginProvider && l.ProviderKey == providerKey));
         }
         #endregion
 
@@ -447,8 +451,13 @@ namespace AspNetCore.Identity.Marten
         {
             Guard(cancellationToken);
 
-            var users = await Session.QueryAsync(new FindUsersByClaim<TUser, TKey>(claim));
-            return users.ToList();
+            // Temporarily do not use compiled queries for searching within child collections
+            // SEE https://github.com/JasperFx/marten/issues/503
+            // var users = await Session.QueryAsync(new FindUsersByClaim<TUser, TKey>(claim));
+            // return users.ToList();
+
+            var users = await Session.Query<TUser>().Where(u => u.Claims.Any(c => c.Type == claim.Type && c.Value == claim.Value)).ToListAsync();
+            return users;
         }
 
         #endregion
