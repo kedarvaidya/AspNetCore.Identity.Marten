@@ -7,6 +7,11 @@ namespace AspNetCore.Identity.Marten
 {
     public class IdentityUserAuthenticationToken
     {
+        // For Json Deserialization
+        public IdentityUserAuthenticationToken()
+        {
+        }
+
         public IdentityUserAuthenticationToken(string loginProvider, string name, string value)
         {
             if (String.IsNullOrWhiteSpace(loginProvider)) throw new ArgumentNullException(nameof(loginProvider));
@@ -18,10 +23,10 @@ namespace AspNetCore.Identity.Marten
             Value = value;
         }
 
-        public virtual string LoginProvider { get; private set; }
+        public virtual string LoginProvider { get; set; }
 
-        public virtual string Name { get; private set; }
+        public virtual string Name { get; set; }
 
-        public virtual string Value { get; private set; }
+        public virtual string Value { get; set; }
     }
 }

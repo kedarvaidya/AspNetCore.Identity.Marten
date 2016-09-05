@@ -18,6 +18,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AspNetCore.Identity.Marten", "src\AspNetCore.Identity.Marten\AspNetCore.Identity.Marten.xproj", "{8BFD982C-927E-4591-965E-87616C4195C3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{7B48A428-4B44-466D-A14F-44FB697C9B10}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AspNetCore.Identity.Marten.MvcSample", "samples\AspNetCore.Identity.Marten.MvcSample\AspNetCore.Identity.Marten.MvcSample.xproj", "{68433A28-5B83-4AE2-A2E4-4A6F1469DCB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,11 +32,16 @@ Global
 		{8BFD982C-927E-4591-965E-87616C4195C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BFD982C-927E-4591-965E-87616C4195C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BFD982C-927E-4591-965E-87616C4195C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68433A28-5B83-4AE2-A2E4-4A6F1469DCB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68433A28-5B83-4AE2-A2E4-4A6F1469DCB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68433A28-5B83-4AE2-A2E4-4A6F1469DCB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68433A28-5B83-4AE2-A2E4-4A6F1469DCB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8BFD982C-927E-4591-965E-87616C4195C3} = {F016F3CF-83B7-4F9E-AB28-684567F75D70}
+		{68433A28-5B83-4AE2-A2E4-4A6F1469DCB2} = {7B48A428-4B44-466D-A14F-44FB697C9B10}
 	EndGlobalSection
 EndGlobal

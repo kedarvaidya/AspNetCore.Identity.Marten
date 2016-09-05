@@ -8,6 +8,11 @@ namespace AspNetCore.Identity.Marten
 {
     public class IdentityUserClaim
     {
+        // For Json Deserialization
+        public IdentityUserClaim()
+        {
+        }
+
         public IdentityUserClaim(Claim claim)
         {
             if (claim == null) throw new ArgumentNullException(nameof(claim));
@@ -16,9 +21,9 @@ namespace AspNetCore.Identity.Marten
             this.Value = claim.Value;
         }
 
-        public string Type { get; private set; }
+        public string Type { get; set; }
 
-        public string Value { get; private set; }
+        public string Value { get; set; }
 
         public static implicit operator IdentityUserClaim(Claim claim) => new IdentityUserClaim(claim);
 

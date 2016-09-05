@@ -7,13 +7,13 @@ using Marten.Linq;
 
 namespace AspNetCore.Identity.Marten.Internal
 {
-    internal class FindByLogin<TUser, TKey> : ICompiledQuery<TUser, TUser>
+    internal class FindUserByLogin<TUser, TKey> : ICompiledQuery<TUser, TUser>
         where TUser : IdentityUser<TKey>
     {
         public string LoginProvider { get; private set; }
         public string ProviderKey { get; private set; }
 
-        public FindByLogin(string loginProvider, string providerKey)
+        public FindUserByLogin(string loginProvider, string providerKey)
         {
             LoginProvider = loginProvider;
             ProviderKey = providerKey;
