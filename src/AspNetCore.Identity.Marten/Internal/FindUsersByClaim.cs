@@ -12,6 +12,9 @@ namespace AspNetCore.Identity.Marten.Internal
     {
         public IdentityUserClaim Claim { get; private set; }
 
+        public string ClaimType => Claim?.Type;
+        public string ClaimValue => Claim?.Value;
+
         public FindUsersByClaim(IdentityUserClaim claim)
         {
             Claim = claim;
@@ -19,7 +22,7 @@ namespace AspNetCore.Identity.Marten.Internal
 
         Expression<Func<IQueryable<TUser>, IEnumerable<TUser>>> ICompiledQuery<TUser, IEnumerable<TUser>>.QueryIs()
         {
-            return q => q.Where(u => u.Claims.Any(c => c.Type == Claim.Type && c.Value == Claim.Value));
+            return q => q.Where(u => u.Claims.Any(c => c.Type == ClaimType && c.Value == ClaimValue));
         }
     }
 }
