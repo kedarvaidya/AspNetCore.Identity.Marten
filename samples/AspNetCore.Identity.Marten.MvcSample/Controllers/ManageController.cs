@@ -66,6 +66,8 @@ namespace AspNetCore.Identity.Marten.MvcSample.Controllers
                 Logins = await _userManager.GetLoginsAsync(user),
                 BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user)
             };
+            var idClaim = User.Claims.First();
+            var users = await _userManager.GetUsersForClaimAsync(new System.Security.Claims.Claim(idClaim.Type, idClaim.Value));
             return View(model);
         }
 
