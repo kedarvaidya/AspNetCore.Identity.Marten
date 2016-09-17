@@ -23,7 +23,7 @@
   },
 
   "dependencies": {
-    "Marten": "1.0.0-alpha-719",
+    "Marten": "1.0.*",
     "Microsoft.AspNetCore.Identity": "1.0.0"
   },
 
