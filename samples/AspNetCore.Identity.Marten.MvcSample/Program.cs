@@ -36,7 +36,7 @@ namespace AspNetCore.Identity.Marten.MvcSample
         {
             var sampleAssembly = typeof(Startup).GetTypeInfo().Assembly;
             var embeddedFileProvider = new EmbeddedFileProvider(sampleAssembly, "AspNetCore.Identity.Marten.MvcSample");
-            var certificateFileInfo = embeddedFileProvider.GetFileInfo("compiler/resources/sample.pfx");
+            var certificateFileInfo = embeddedFileProvider.GetFileInfo("compiler/resources/example.pfx");
             using (var certificateStream = certificateFileInfo.CreateReadStream())
             {
                 byte[] certificatePayload;
@@ -46,7 +46,7 @@ namespace AspNetCore.Identity.Marten.MvcSample
                     certificatePayload = memoryStream.ToArray();
                 }
 
-                return new X509Certificate2(certificatePayload, "SamplePassword");
+                return new X509Certificate2(certificatePayload, "ExamplePassword");
             }
         }
     }
